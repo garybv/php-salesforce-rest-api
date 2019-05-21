@@ -1,27 +1,25 @@
 {
-  "name": "bjsmasth/php-salesforce-rest-api",
+  "name": "sb-bizmates/php-salesforce-rest-api",
   "license": "MIT",
   "keywords": [
-    "bjsmasth",
-    "php salesforce",
-    "php salesforce rest",
-    "php salesforce rest api",
-    "php"
+    "SalesForce",
+    "SalesForce REST",
+    "SalesForce REST API"
   ],
   "authors": [
     {
-      "name": "Bijesh Shrestha",
-      "email": "bjsmasth@gmail.com",
-      "homepage": "https://github.com/bjsmasth"
+      "name": "S.Bogomolov",
+      "homepage": "https://github.com/sb-bizmates"
     }
   ],
   "require": {
     "guzzlehttp/guzzle": "^6.2",
-    "php": ">=5.5"
+    "php": ">=7.1",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
-      "bjsmasth\\Salesforce\\": "src/"
+      "sb_bizmates\\SalesForce\\": "src/"
     }
   }
 }

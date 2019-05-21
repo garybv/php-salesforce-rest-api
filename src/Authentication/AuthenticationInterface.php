@@ -1,12 +1,10 @@
 <?php
 
-namespace bjsmasth\Salesforce\Authentication;
+namespace sb_bizmates\SalesForce\Authentication;
 
 interface AuthenticationInterface
 {
-    public function getAccessToken();
+    public function getAccessToken(): ?string;
 
-    public function getInstanceUrl();
+    public function getInstanceUrl(): ?string;
 }
-
-?>

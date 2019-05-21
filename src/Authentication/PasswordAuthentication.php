@@ -1,33 +1,42 @@
 <?php
 
-namespace bjsmasth\Salesforce\Authentication;
+namespace sb_bizmates\SalesForce\Authentication;
 
-use bjsmasth\Salesforce\Exception\SalesforceAuthentication;
 use GuzzleHttp\Client;
+use sb_bizmates\SalesForce\Exception\SalesForceAuthentication;
 
 class PasswordAuthentication implements AuthenticationInterface
 {
+    const DEFAULT_ENDPOINT = 'https://login.salesforce.com/';
+
+    /** @var string */
+    protected $endpoint = self::DEFAULT_ENDPOINT;
+
+    /** @var Client */
     protected $client;
-    protected $endPoint;
+
+    /** @var array */
     protected $options;
+
+    /** @var string|null */
     protected $access_token;
+
+    /** @var string|null */
     protected $instance_url;
 
-    public function __construct(array $options)
+    public function __construct(Client $client, array $options)
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $this->endPoint = 'https://login.salesforce.com/';
+        $this->client = $client;
         $this->options = $options;
     }
 
+    /**
+     * @throws SalesForceAuthentication
+     */
     public function authenticate()
     {
-        $client = new Client();
+        $request = $this->client->request('POST', $this->endpoint . 'services/oauth2/token', ['form_params' => $this->options]);
 
-        $request = $client->request('post', "{$this->endPoint}services/oauth2/token", ['form_params' => $this->options]);
         $response = json_decode($request->getBody(), true);
 
         if ($response) {
@@ -36,24 +45,33 @@ class PasswordAuthentication implements AuthenticationInterface
 
             $_SESSION['salesforce'] = $response;
         } else {
-            throw new SalesforceAuthentication($request->getBody());
+            throw new SalesForceAuthentication($request->getBody());
         }
     }
 
-    public function setEndpoint($endPoint)
+    /**
+     * @param string $endpoint
+     * @return $this|self
+     */
+    public function setEndpoint(string $endpoint): self
     {
-        $this->endPoint = $endPoint;
+        $this->endpoint = $endpoint;
+        return $this;
     }
 
-    public function getAccessToken()
+    /**
+     * @return string|null
+     */
+    public function getAccessToken(): ?string
     {
         return $this->access_token;
     }
 
-    public function getInstanceUrl()
+    /**
+     * @return string|null
+     */
+    public function getInstanceUrl(): ?string
     {
         return $this->instance_url;
     }
 }
-
-?>
