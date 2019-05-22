@@ -3,29 +3,49 @@
 namespace bizmatesinc\SalesForce;
 
 use GuzzleHttp\Client;
-use bizmatesinc\SalesForce\Authentication\AuthenticationInterface;
-use bizmatesinc\SalesForce\Exception\SalesForce as SalesForceException;
+use bizmatesinc\SalesForce\Exception\SalesForceException as SalesForceException;
 
 class CRUD
 {
-    /** @var AuthenticationInterface */
-    protected $auth;
+    /** @var API */
+    protected $api;
 
-    public function __construct(AuthenticationInterface $auth)
+    /** @var string */
+    protected $baseUrl;
+
+    /** @var array */
+    protected $authHeaders;
+
+    /**
+     * CRUD constructor.
+     * @param API $api
+     * @throws Exception\ApiNotInitialized
+     */
+    public function __construct(API $api)
     {
-        $this->auth = $auth;
+        $this->api = $api;
+
+        $this->baseUrl = $api->getBaseUrl();
+        $this->authHeaders = $this->api->getAuth()->getAuthHeaders();
+    }
+
+    /**
+     * @param string[] ...$parts
+     * @return string
+     */
+    public function url(...$parts)
+    {
+        array_unshift($parts, $this->baseUrl);
+        return implode('/', $parts);
     }
 
     public function query($query)
     {
-        $url = $this->auth->getInstanceUrl() . '/services/data/v39.0/query';
+        $url = $this->baseUrl . '/query';
 
         $client = new Client();
         $request = $client->request('GET', $url, [
-            'headers' => [
-                'Authorization' => 'OAuth ' . $this->auth->getAccessToken(),
-                'Content-type' => 'application/json'
-            ],
+            'headers' => $this->authHeaders,
             'query' => [
                 'q' => $query
             ]
@@ -36,15 +56,12 @@ class CRUD
 
     public function create($object, array $data)
     {
-        $url = $this->auth->getInstanceUrl() . "/services/data/v39.0/sobjects/{$object}/";
+        $url = $this->url('sobjects', $object);
 
         $client = new Client();
 
         $request = $client->request('POST', $url, [
-            'headers' => [
-                'Authorization' => 'OAuth ' . $this->auth->getAccessToken(),
-                'Content-type' => 'application/json'
-            ],
+            'headers' => $this->authHeaders,
             'json' => $data
         ]);
 
@@ -65,15 +82,12 @@ class CRUD
 
     public function update($object, $id, array $data)
     {
-        $url = $this->auth->getInstanceUrl() . "/services/data/v39.0/sobjects/{$object}/{$id}";
+        $url = $this->url('sobjects', $object, $id);
 
         $client = new Client();
 
         $request = $client->request('PATCH', $url, [
-            'headers' => [
-                'Authorization' => 'OAuth ' . $this->auth->getAccessToken(),
-                'Content-type' => 'application/json'
-            ],
+            'headers' => $this->authHeaders,
             'json' => $data
         ]);
 
@@ -90,15 +104,12 @@ class CRUD
 
     public function upsert($object, $field, $id, array $data)
     {
-        $url = $this->auth->getInstanceUrl() . "/services/data/v39.0/sobjects/{$object}/{$field}/{$id}";
+        $url = $this->url('sobjects', $object, $field, $id);
 
         $client = new Client();
 
         $request = $client->request('PATCH', $url, [
-            'headers' => [
-                'Authorization' => 'OAuth ' . $this->auth->getAccessToken(),
-                'Content-type' => 'application/json'
-            ],
+            'headers' => $this->authHeaders,
             'json' => $data
         ]);
 
@@ -115,14 +126,11 @@ class CRUD
 
     public function delete($object, $id)
     {
-        $url = $this->auth->getInstanceUrl() . "/services/data/v39.0/sobjects/{$object}/{$id}";
+        $url = $this->url('sobjects', $object, $id);
 
         $client = new Client();
         $request = $client->request('DELETE', $url, [
-            'headers' => [
-                'Authorization' => 'OAuth ' . $this->auth->getAccessToken(),
-                'Content-type' => 'application/json'
-            ],
+            'headers' => $this->authHeaders,
         ]);
 
         $status = $request->getStatusCode();

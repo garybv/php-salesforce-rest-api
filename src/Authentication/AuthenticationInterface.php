@@ -7,4 +7,6 @@ interface AuthenticationInterface
     public function getAccessToken(): ?string;
 
     public function getInstanceUrl(): ?string;
+
+    public function getAuthHeaders(): array;
 }

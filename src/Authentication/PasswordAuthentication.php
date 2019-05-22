@@ -2,8 +2,8 @@
 
 namespace bizmatesinc\SalesForce\Authentication;
 
+use bizmatesinc\SalesForce\Exception\AuthenticationFailed;
 use GuzzleHttp\Client;
-use bizmatesinc\SalesForce\Exception\SalesForceAuthentication;
 
 class PasswordAuthentication implements AuthenticationInterface
 {
@@ -31,7 +31,7 @@ class PasswordAuthentication implements AuthenticationInterface
     }
 
     /**
-     * @throws SalesForceAuthentication
+     * @throws AuthenticationFailed
      */
     public function authenticate()
     {
@@ -45,7 +45,7 @@ class PasswordAuthentication implements AuthenticationInterface
 
             $_SESSION['salesforce'] = $response;
         } else {
-            throw new SalesForceAuthentication($request->getBody());
+            throw new AuthenticationFailed($request->getBody());
         }
     }
 
@@ -73,5 +73,13 @@ class PasswordAuthentication implements AuthenticationInterface
     public function getInstanceUrl(): ?string
     {
         return $this->instance_url;
+    }
+
+    public function getAuthHeaders(): array
+    {
+        return [
+            'Authorization' => 'OAuth ' . $this->access_token,
+            'Content-type' => 'application/json'
+        ];
     }
 }

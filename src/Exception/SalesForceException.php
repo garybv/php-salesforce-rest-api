@@ -2,7 +2,7 @@
 
 namespace bizmatesinc\SalesForce\Exception;
 
-class SalesForce extends \Exception
+class SalesForceException extends \Exception
 {
     
 }
