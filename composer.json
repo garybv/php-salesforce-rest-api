@@ -1,5 +1,5 @@
 {
-  "name": "sb-bizmates/php-salesforce-rest-api",
+  "name": "bizmatesinc/php-salesforce-rest-api",
   "license": "MIT",
   "keywords": [
     "SalesForce",
@@ -9,7 +9,7 @@
   "authors": [
     {
       "name": "S.Bogomolov",
-      "homepage": "https://github.com/sb-bizmates"
+      "homepage": "https://github.com/bizmatesinc/"
     }
   ],
   "require": {
@@ -19,7 +19,7 @@
   },
   "autoload": {
     "psr-4": {
-      "sb_bizmates\\SalesForce\\": "src/"
+      "bizmatesinc\\SalesForce\\": "src/"
     }
   }
 }

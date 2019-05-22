@@ -1,9 +1,9 @@
 <?php
 
-namespace sb_bizmates\SalesForce\Authentication;
+namespace bizmatesinc\SalesForce\Authentication;
 
 use GuzzleHttp\Client;
-use sb_bizmates\SalesForce\Exception\SalesForceAuthentication;
+use bizmatesinc\SalesForce\Exception\SalesForceAuthentication;
 
 class PasswordAuthentication implements AuthenticationInterface
 {

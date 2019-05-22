@@ -5,7 +5,7 @@
 Via `composer`:
 
 ```bash
-composer require sb_bizmates/php-salesforce-rest-api
+composer require bizmatesinc/php-salesforce-rest-api
 ```
 
 ## Getting Started
@@ -41,7 +41,7 @@ Update your config file with values for `consumerKey` and `consumerSecret`.
         'password' => 'SALESFORCE_PASSWORD AND SECURITY_TOKEN'
     ];
     
-    $salesforce = new sb_bizmates\SalesForce\Authentication\PasswordAuthentication($options);
+    $salesforce = new bizmatesinc\SalesForce\Authentication\PasswordAuthentication($options);
     $salesforce->authenticate();
     
     $access_token = $salesforce->getAccessToken();
@@ -51,7 +51,7 @@ Update your config file with values for `consumerKey` and `consumerSecret`.
 Change Endpoint:
     
 ```php
-    $salesforce = new sb_bizmates\SalesForce\Authentication\PasswordAuthentication($options);
+    $salesforce = new bizmatesinc\SalesForce\Authentication\PasswordAuthentication($options);
     $salesforce->setEndpoint('https://test.salesforce.com/');
     $salesforce->authenticate();
  
@@ -64,7 +64,7 @@ Change Endpoint:
 ```php
     $query = 'SELECT Id,Name FROM ACCOUNT LIMIT 100';
     
-    $crud = new \sb_bizmates\SalesForce\CRUD();
+    $crud = new \bizmatesinc\SalesForce\CRUD();
     $crud->query($query);
 ```
 

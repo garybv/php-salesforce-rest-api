@@ -1,6 +1,6 @@
 <?php
 
-namespace sb_bizmates\SalesForce\Exception;
+namespace bizmatesinc\SalesForce\Exception;
 
 class SalesForceAuthentication extends SalesForce
 {

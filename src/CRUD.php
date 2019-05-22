@@ -1,10 +1,10 @@
 <?php
 
-namespace sb_bizmates\SalesForce;
+namespace bizmatesinc\SalesForce;
 
 use GuzzleHttp\Client;
-use sb_bizmates\SalesForce\Authentication\AuthenticationInterface;
-use sb_bizmates\SalesForce\Exception\SalesForce as SalesForceException;
+use bizmatesinc\SalesForce\Authentication\AuthenticationInterface;
+use bizmatesinc\SalesForce\Exception\SalesForce as SalesForceException;
 
 class CRUD
 {

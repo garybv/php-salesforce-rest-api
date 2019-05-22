@@ -1,6 +1,6 @@
 <?php
 
-namespace sb_bizmates\SalesForce\Authentication;
+namespace bizmatesinc\SalesForce\Authentication;
 
 interface AuthenticationInterface
 {
