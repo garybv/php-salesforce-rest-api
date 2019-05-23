@@ -39,6 +39,11 @@ class CRUD
         return implode('/', $parts);
     }
 
+    /**
+     * @param $query
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function query($query)
     {
         $url = $this->baseUrl . '/query';
@@ -54,6 +59,13 @@ class CRUD
         return json_decode($request->getBody(), true);
     }
 
+    /**
+     * @param $object
+     * @param array $data
+     * @return mixed
+     * @throws SalesForceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function create($object, array $data)
     {
         $url = $this->url('sobjects', $object);
@@ -80,6 +92,14 @@ class CRUD
 
     }
 
+    /**
+     * @param $object
+     * @param $id
+     * @param array $data
+     * @return int
+     * @throws SalesForceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function update($object, $id, array $data)
     {
         $url = $this->url('sobjects', $object, $id);
@@ -102,6 +122,15 @@ class CRUD
         return $status;
     }
 
+    /**
+     * @param $object
+     * @param $field
+     * @param $id
+     * @param array $data
+     * @return int
+     * @throws SalesForceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function upsert($object, $field, $id, array $data)
     {
         $url = $this->url('sobjects', $object, $field, $id);
@@ -124,6 +153,13 @@ class CRUD
         return $status;
     }
 
+    /**
+     * @param $object
+     * @param $id
+     * @return bool
+     * @throws SalesForceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function delete($object, $id)
     {
         $url = $this->url('sobjects', $object, $id);

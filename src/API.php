@@ -34,6 +34,7 @@ class API
     /**
      * @throws \JsonException
      * @throws UnexpectedJsonFormat
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getVersions()
     {
