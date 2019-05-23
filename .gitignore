@@ -1,4 +1,7 @@
-.idea/
+# IntelliJ PhpStorm project files
+/.idea/
 
-vendor/
-composer.lock
+# Composer-related
+/tmp/
+/vendor/
+/composer.lock
