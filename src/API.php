@@ -9,6 +9,9 @@ use GuzzleHttp\Client;
 
 class API
 {
+    /** @var Client */
+    protected $client;
+
     /** @var AuthenticationInterface */
     protected $auth;
 
@@ -18,8 +21,9 @@ class API
     /** @var string */
     protected $selectedVersion;
 
-    public function __construct(AuthenticationInterface $auth)
+    public function __construct(Client $client, AuthenticationInterface $auth)
     {
+        $this->client = $client;
         $this->auth = $auth;
     }
 
@@ -43,8 +47,7 @@ class API
 
         $url = $this->auth->getInstanceUrl() . '/services/data/';
 
-        $client = new Client();
-        $request = $client->request('GET', $url, [
+        $request = $this->client->request('GET', $url, [
             'headers' => [
                 'Content-type' => 'application/json'
             ]

@@ -32,6 +32,7 @@ class PasswordAuthentication implements AuthenticationInterface
 
     /**
      * @throws AuthenticationFailed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function authenticate()
     {
@@ -78,7 +79,7 @@ class PasswordAuthentication implements AuthenticationInterface
     public function getAuthHeaders(): array
     {
         return [
-            'Authorization' => 'OAuth ' . $this->access_token,
+            'Authorization' => 'OAuth ' . $this->getAccessToken(),
             'Content-type' => 'application/json'
         ];
     }

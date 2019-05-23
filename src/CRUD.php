@@ -2,11 +2,16 @@
 
 namespace bizmatesinc\SalesForce;
 
+use bizmatesinc\SalesForce\Exception\UnexpectedJsonFormat;
 use GuzzleHttp\Client;
 use bizmatesinc\SalesForce\Exception\SalesForceException as SalesForceException;
+use JsonSchema\Validator;
 
 class CRUD
 {
+    /** @var Client */
+    protected $client;
+
     /** @var API */
     protected $api;
 
@@ -18,11 +23,13 @@ class CRUD
 
     /**
      * CRUD constructor.
+     * @param Client $client
      * @param API $api
      * @throws Exception\ApiNotInitialized
      */
-    public function __construct(API $api)
+    public function __construct(Client $client, API $api)
     {
+        $this->client = $client;
         $this->api = $api;
 
         $this->baseUrl = $api->getBaseUrl();
@@ -43,20 +50,66 @@ class CRUD
      * @param $query
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws UnexpectedJsonFormat
      */
     public function query($query)
     {
         $url = $this->baseUrl . '/query';
 
-        $client = new Client();
-        $request = $client->request('GET', $url, [
+        $rawResponse = $this->client->request('GET', $url, [
             'headers' => $this->authHeaders,
             'query' => [
                 'q' => $query
             ]
         ]);
 
-        return json_decode($request->getBody(), true);
+        $response = json_decode($rawResponse->getBody(), true);
+        $responseObject = json_decode($rawResponse->getBody());
+
+        $schemaObject = json_decode('
+        {
+            "type": "object",
+            "required": ["totalSize", "done", "records"],
+            "properties": {
+                "totalSize": {
+                    "type": "integer"
+                }, 
+                "done": {
+                    "type": "boolean"
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["attributes"],
+                        "properties": {
+                            "attributes": {
+                                "type": "object",
+                                "required": ["type", "url"],
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }');
+
+        $validator = new Validator();
+
+        $validator->validate($responseObject, $schemaObject);
+
+        if (!$validator->isValid()) {
+            throw new UnexpectedJsonFormat();
+        }
+
+        return $response;
     }
 
     /**
@@ -70,9 +123,7 @@ class CRUD
     {
         $url = $this->url('sobjects', $object);
 
-        $client = new Client();
-
-        $request = $client->request('POST', $url, [
+        $request = $this->client->request('POST', $url, [
             'headers' => $this->authHeaders,
             'json' => $data
         ]);
@@ -104,9 +155,7 @@ class CRUD
     {
         $url = $this->url('sobjects', $object, $id);
 
-        $client = new Client();
-
-        $request = $client->request('PATCH', $url, [
+        $request = $this->client->request('PATCH', $url, [
             'headers' => $this->authHeaders,
             'json' => $data
         ]);
@@ -135,9 +184,7 @@ class CRUD
     {
         $url = $this->url('sobjects', $object, $field, $id);
 
-        $client = new Client();
-
-        $request = $client->request('PATCH', $url, [
+        $request = $this->client->request('PATCH', $url, [
             'headers' => $this->authHeaders,
             'json' => $data
         ]);
@@ -164,8 +211,7 @@ class CRUD
     {
         $url = $this->url('sobjects', $object, $id);
 
-        $client = new Client();
-        $request = $client->request('DELETE', $url, [
+        $request = $this->client->request('DELETE', $url, [
             'headers' => $this->authHeaders,
         ]);
 
