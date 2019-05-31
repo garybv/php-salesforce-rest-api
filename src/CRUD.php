@@ -6,6 +6,7 @@ use bizmatesinc\SalesForce\Exception\BrokenMultipartRecordSet;
 use bizmatesinc\SalesForce\Exception\SalesForceException as SalesForceException;
 use bizmatesinc\SalesForce\Exception\UnexpectedJsonFormat;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use JsonSchema\Validator;
 
 class CRUD
@@ -21,6 +22,9 @@ class CRUD
 
     /** @var array */
     protected $authHeaders;
+
+    /** @var integer|null */
+    protected $lastQueryRecordsCount;
 
     /**
      * CRUD constructor.
@@ -52,7 +56,7 @@ class CRUD
      * @param array $options
      * @return mixed
      * @throws UnexpectedJsonFormat
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     protected function getRawResultSet(string $url, array $options)
     {
@@ -107,12 +111,14 @@ class CRUD
     /**
      * @param $query
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      * @throws UnexpectedJsonFormat
      * @throws BrokenMultipartRecordSet
      */
     public function query($query)
     {
+        $this->lastQueryRecordsCount = null;
+
         $response = $this->getRawResultSet($this->baseUrl . '/query', [
             'headers' => $this->authHeaders,
             'query' => [
@@ -137,7 +143,17 @@ class CRUD
             $resultSet = array_merge($resultSet, $response['records']);
         }
 
+        $this->lastQueryRecordsCount = count($resultSet);
+
         return $resultSet;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLastQueryRecordsCount(): ?int
+    {
+        return $this->lastQueryRecordsCount;
     }
 
     /**
@@ -145,7 +161,7 @@ class CRUD
      * @param array $data
      * @return mixed
      * @throws SalesForceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function create($object, array $data)
     {
@@ -177,7 +193,7 @@ class CRUD
      * @param array $data
      * @return int
      * @throws SalesForceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function update($object, $id, array $data)
     {
@@ -206,7 +222,7 @@ class CRUD
      * @param array $data
      * @return int
      * @throws SalesForceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function upsert($object, $field, $id, array $data)
     {
@@ -233,7 +249,7 @@ class CRUD
      * @param $id
      * @return bool
      * @throws SalesForceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function delete($object, $id)
     {

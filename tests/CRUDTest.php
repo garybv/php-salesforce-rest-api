@@ -5,8 +5,11 @@ declare(strict_types=1);
 use bizmatesinc\SalesForce\API;
 use bizmatesinc\SalesForce\Authentication\PasswordAuthentication;
 use bizmatesinc\SalesForce\CRUD;
+use bizmatesinc\SalesForce\Exception\ApiNotInitialized;
 use bizmatesinc\SalesForce\Exception\BrokenMultipartRecordSet;
+use bizmatesinc\SalesForce\Exception\UnexpectedJsonFormat;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +22,7 @@ final class CRUDTest extends TestCase
     /**
      * @return CRUD
      * @throws ReflectionException
-     * @throws \bizmatesinc\SalesForce\Exception\ApiNotInitialized
+     * @throws ApiNotInitialized
      */
     private function makeCRUD($apiRequests)
     {
@@ -63,9 +66,9 @@ final class CRUDTest extends TestCase
 
     /**
      * @throws ReflectionException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \bizmatesinc\SalesForce\Exception\ApiNotInitialized
-     * @throws \bizmatesinc\SalesForce\Exception\UnexpectedJsonFormat
+     * @throws GuzzleException
+     * @throws ApiNotInitialized
+     * @throws UnexpectedJsonFormat
      * @throws BrokenMultipartRecordSet
      */
     public function testQuery(): void
@@ -117,13 +120,14 @@ final class CRUDTest extends TestCase
         // TODO Add more assertions
         $this->assertIsArray($result);
         $this->assertCount(3, $result);
+        $this->assertEquals(3, $crud->getLastQueryRecordsCount());
     }
 
     /**
      * @throws ReflectionException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \bizmatesinc\SalesForce\Exception\ApiNotInitialized
-     * @throws \bizmatesinc\SalesForce\Exception\UnexpectedJsonFormat
+     * @throws GuzzleException
+     * @throws ApiNotInitialized
+     * @throws UnexpectedJsonFormat
      * @throws BrokenMultipartRecordSet
      */
     public function testQueryBrokenMultipart(): void
@@ -172,14 +176,18 @@ final class CRUDTest extends TestCase
 
         $this->expectException(BrokenMultipartRecordSet::class);
 
-        $crud->query($sfQuery);
+        try {
+            $crud->query($sfQuery);
+        } finally {
+            $this->assertNull($crud->getLastQueryRecordsCount());
+        }
     }
 
     /**
      * @throws ReflectionException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \bizmatesinc\SalesForce\Exception\ApiNotInitialized
-     * @throws \bizmatesinc\SalesForce\Exception\UnexpectedJsonFormat
+     * @throws GuzzleException
+     * @throws ApiNotInitialized
+     * @throws UnexpectedJsonFormat
      * @throws BrokenMultipartRecordSet
      */
     public function testQueryMultipartOK(): void
@@ -253,5 +261,6 @@ final class CRUDTest extends TestCase
         // TODO Add more assertions
         $this->assertIsArray($result);
         $this->assertCount(4, $result);
+        $this->assertEquals(4, $crud->getLastQueryRecordsCount());
     }
 }
