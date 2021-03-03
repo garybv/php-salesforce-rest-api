@@ -115,4 +115,25 @@ class API
         }
         return $this->auth->getInstanceUrl() . $this->versions[$this->selectedVersion];
     }
+
+    public function getHogehogeHugahugaTestFunction(string $hoge): void
+    {
+        $fuga = $hoge;
+        $a = 1;
+        $b = true;
+
+        if ($b) {
+            if ($a !== 0) {
+                if ($a === 1) {
+                    if (true) {
+                        $c = 'test';
+                    }
+                }
+            }
+        }
+
+        while ($b) {
+            $c += 2;
+        }
+    }
 }
