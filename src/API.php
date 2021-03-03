@@ -20,7 +20,13 @@ class API
 
     /** @var string */
     protected $selectedVersion;
-
+    
+    /**
+     * Constructor
+     *
+     * @param Client $client
+     * @param AuthenticationInterface $auth
+     */
     public function __construct(Client $client, AuthenticationInterface $auth)
     {
         $this->client = $client;
